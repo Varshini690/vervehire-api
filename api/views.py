@@ -49,36 +49,22 @@ class ResumeUploadView(APIView):
         file = request.FILES.get("resume")
 
         if not file:
-            return Response({"error": "No resume uploaded."}, status=400)
+            return Response({"error": "No resume uploaded. Send 'resume' file."}, status=400)
 
-        # Detect MIME type
-        mime = file.content_type
-        if mime not in ["application/pdf"]:
-            return Response(
-                {"error": "Only PDF resumes are supported. Please upload a PDF file."},
-                status=400
-            )
-
-        # Save resume
         resume = Resume.objects.create(user=request.user, file=file)
 
-        # Parse text + structured data
+        # Parse AI resume data
         with resume.file.open("rb") as f:
-            try:
-                parsed = parse_resume_text_from_fileobj(f)
-            except Exception as e:
-                return Response(
-                    {"error": "Failed to read PDF. Please upload a valid PDF."},
-                    status=400
-                )
+            parsed = parse_resume_text_from_fileobj(f)
 
         resume.extracted_data = parsed
         resume.save()
 
         return Response({
-            "message": "Resume uploaded & parsed",
+            "message": "Resume uploaded and parsed successfully",
             "data": parsed
         }, status=200)
+
 
 # =====================================================
 # INTERVIEW SETUP + REGULAR QUESTIONS
