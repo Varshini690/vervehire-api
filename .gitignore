@@ -1,0 +1,31 @@
+# ENV FILES (VERY IMPORTANT)
+.env
+.env.local
+.env.*
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Django
+db.sqlite3
+media/
+staticfiles/
+
+# Virtual Environment
+venv/
+.env/
+.env.bak
+
+# Logs
+*.log
+
+# OS Files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
