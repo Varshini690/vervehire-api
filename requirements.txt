@@ -1,18 +1,12 @@
 Django
 djangorestframework
-django-cors-headers
-gunicorn
-PyMuPDF
-python-dotenv
-openai
-tqdm
-sqlparse
-typing_extensions
 djangorestframework-simplejwt
-drf-yasg
-psycopg2-binary
+django-cors-headers
+python-dotenv
 
 PyPDF2
-PyMuPDF
+pymupdf
 pytesseract
-Pillow
+pillow
+
+openai

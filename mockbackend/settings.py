@@ -7,23 +7,22 @@ load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# -----------------------------------------
+# =========================================================
 # SECURITY
-# -----------------------------------------
+# =========================================================
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
 DEBUG = os.getenv("DEBUG", "True") == "True"
 
-# Allow frontend + backend + local development
 ALLOWED_HOSTS = [
-    "*",                                # Accept all hosts (Render requires this)
+    "*",                               # Render requires wildcard support
     "vervehire-api.onrender.com",
     "localhost",
     "127.0.0.1",
 ]
 
-# -----------------------------------------
+# =========================================================
 # INSTALLED APPS
-# -----------------------------------------
+# =========================================================
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -37,15 +36,15 @@ INSTALLED_APPS = [
     "rest_framework_simplejwt",
     "corsheaders",
 
-    # Local apps
+    # Local app
     "api",
 ]
 
-# -----------------------------------------
+# =========================================================
 # MIDDLEWARE
-# -----------------------------------------
+# =========================================================
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # MUST be at top
+    "corsheaders.middleware.CorsMiddleware",  # MUST be very top
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -57,9 +56,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "mockbackend.urls"
 
-# -----------------------------------------
+# =========================================================
 # TEMPLATES
-# -----------------------------------------
+# =========================================================
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
@@ -78,9 +77,9 @@ TEMPLATES = [
 WSGI_APPLICATION = "mockbackend.wsgi.application"
 ASGI_APPLICATION = "mockbackend.asgi.application"
 
-# -----------------------------------------
-# DATABASE (SQLite → fine for Render)
-# -----------------------------------------
+# =========================================================
+# DATABASE
+# =========================================================
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -88,9 +87,9 @@ DATABASES = {
     }
 }
 
-# -----------------------------------------
+# =========================================================
 # PASSWORD VALIDATION
-# -----------------------------------------
+# =========================================================
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},
@@ -98,43 +97,40 @@ AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
 ]
 
-# -----------------------------------------
-# CORS CONFIG (THE MOST IMPORTANT)
-# -----------------------------------------
+# =========================================================
+# CORS CONFIGURATION (THIS FIXES YOUR ERROR)
+# =========================================================
 
+# Do NOT enable allow-all — keep controlled security
 CORS_ALLOW_ALL_ORIGINS = False
 
-# Allowed React frontend origins (local + vercel)
 CORS_ALLOWED_ORIGINS = [
-    "https://vervehire-ui.vercel.app",
-    "http://localhost:5173",
+    "https://vervehire-ui.vercel.app",   # Your frontend (deployed)
+    "http://localhost:5173",             # Local dev frontend
     "http://127.0.0.1:5173",
 ]
 
-# Allow cookies/token refresh from frontend
 CORS_ALLOW_CREDENTIALS = True
-
-# Allow all headers (fixes OPTIONS + file upload issues)
 CORS_ALLOW_HEADERS = ["*"]
+CORS_ALLOW_METHODS = ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"]
 
-# Allow all methods
-CORS_ALLOW_METHODS = ["DELETE", "GET", "OPTIONS", "PATCH", "POST", "PUT"]
-
-# Required for POST requests from Vercel
+# Required for Vercel → Render POST requests
 CSRF_TRUSTED_ORIGINS = [
     "https://vervehire-ui.vercel.app",
     "https://vervehire-api.onrender.com",
 ]
 
-# -----------------------------------------
-# REST FRAMEWORK + JWT
-# -----------------------------------------
+# =========================================================
+# REST FRAMEWORK / JWT
+# =========================================================
+
+# !!! FIXED: Register/Login were failing because IsAuthenticated was global
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
-        "rest_framework.permissions.IsAuthenticated",
+        "rest_framework.permissions.AllowAny",  # FIX — very important
     ),
 }
 
@@ -144,9 +140,9 @@ SIMPLE_JWT = {
     "AUTH_HEADER_TYPES": ("Bearer",),
 }
 
-# -----------------------------------------
+# =========================================================
 # STATIC & MEDIA
-# -----------------------------------------
+# =========================================================
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
@@ -155,7 +151,7 @@ MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# -----------------------------------------
+# =========================================================
 # OPENAI
-# -----------------------------------------
+# =========================================================
 OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
