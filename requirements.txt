@@ -11,3 +11,8 @@ typing_extensions
 djangorestframework-simplejwt
 drf-yasg
 psycopg2-binary
+
+PyPDF2
+PyMuPDF
+pytesseract
+Pillow
