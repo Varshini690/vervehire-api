@@ -12,12 +12,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # ---------------------------
 
 SECRET_KEY = os.getenv("SECRET_KEY", "django-insecure-default-key")
-DEBUG = os.getenv("DEBUG") == "True"
+DEBUG = os.getenv("DEBUG", "True") == "True"
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
     "localhost",
-    "vervehire-api.onrender.com",  # <-- Required for Render deployment
+    "vervehire-api.onrender.com",   # Backend Render URL
 ]
 
 # ---------------------------
@@ -46,7 +46,7 @@ INSTALLED_APPS = [
 # ---------------------------
 
 MIDDLEWARE = [
-    "corsheaders.middleware.CorsMiddleware",  # MUST be at top for CORS to work
+    "corsheaders.middleware.CorsMiddleware",  # Must be first
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -103,37 +103,30 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ---------------------------
-# CORS
+# CORS CONFIG
 # ---------------------------
+
+CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
-    "https://vervehire-ui.vercel.app",   # <-- Vercel frontend allowed
+    "https://vervehire-ui.vercel.app",     # Vercel Frontend
 ]
 
 CSRF_TRUSTED_ORIGINS = [
-    "https://vervehire-ui.vercel.app",   # <-- Required for POST login/register
+    "https://vervehire-ui.vercel.app",
     "https://vervehire-api.onrender.com",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ALLOW_HEADERS = [
-    "authorization",
-    "content-type",
-    "accept",
-    "origin",
-    "x-csrftoken",
-]
-
-CORS_ALLOW_METHODS = [
-    "GET",
-    "POST",
-    "PUT",
-    "PATCH",
-    "DELETE",
-    "OPTIONS",
+    "Authorization",
+    "Content-Type",
+    "Accept",
+    "Origin",
+    "X-CSRFToken",
 ]
 
 # ---------------------------
