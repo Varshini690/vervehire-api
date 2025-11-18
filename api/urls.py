@@ -7,7 +7,7 @@ from .views import (
     ATSCheckView,
     JDQuestionView,
     CoverLetterView,
-    InterviewBotView,
+
 )
 from rest_framework_simplejwt.views import (
     TokenObtainPairView,
@@ -31,5 +31,5 @@ urlpatterns = [
     path("resume/ats-check/", ATSCheckView.as_view(), name="ats-check"),
     path("resume/jd-questions/", JDQuestionView.as_view(), name="jd-questions"),
     path("resume/cover-letter/", CoverLetterView.as_view(), name="cover-letter"),
-    path("resume/interview-bot/", InterviewBotView.as_view(), name="interview-bot"),
+   
 ]

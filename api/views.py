@@ -30,7 +30,7 @@ from .utils import (
     generate_ats_report,
     generate_jd_based_questions,
     generate_cover_letter,
-    generate_interview_bot_response,
+    
 )
 
 logger = logging.getLogger(__name__)
@@ -271,50 +271,3 @@ class CoverLetterView(APIView):
 # =====================================================
 # PREMIUM FEATURE 5 — INTERVIEW BOT
 # =====================================================
-class InterviewBotView(APIView):
-    permission_classes = [permissions.IsAuthenticated]
-
-    def post(self, request):
-        session_id = request.data.get("session_id")
-        user_message = request.data.get("message")
-        if not user_message:
-            return _error("message is required", status.HTTP_400_BAD_REQUEST)
-
-        resume = Resume.objects.filter(user=request.user).last()
-        if not resume:
-            return _error("Upload resume first", status.HTTP_400_BAD_REQUEST)
-
-        resume_text = json.dumps(resume.extracted_data)
-
-        # Load or create session
-        session = None
-        if session_id:
-            try:
-                session = InterviewSession.objects.get(session_id=session_id)
-            except InterviewSession.DoesNotExist:
-                return _error("Session not found", status.HTTP_404_NOT_FOUND)
-            except Exception as e:
-                logger.exception("InterviewBot: Error loading session")
-                return _error("Failed to load session.", status.HTTP_500_INTERNAL_SERVER_ERROR)
-        else:
-            try:
-                session = InterviewSession.objects.create(user=request.user, resume=resume, history=[])
-            except Exception as e:
-                logger.exception("InterviewBot: Failed to create session")
-                return _error("Failed to create interview session.", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        # AI bot reply
-        try:
-            bot_json = generate_interview_bot_response(history=session.history, resume_text=resume_text, user_message=user_message)
-        except Exception as e:
-            logger.exception("InterviewBot: generate_interview_bot_response failed")
-            return _error("Failed to get bot response.", status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-        try:
-            session.history.append({"role": "user", "content": user_message})
-            session.history.append({"role": "ai", "content": bot_json})
-            session.save()
-        except Exception as e:
-            logger.exception("InterviewBot: Failed to update session history")
-
-        return Response({"session_id": session.session_id, "response": bot_json, "history": session.history}, status=status.HTTP_200_OK)
